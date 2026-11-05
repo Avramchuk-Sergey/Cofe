@@ -1,0 +1,411 @@
+
+/* ===== BASE ===== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #17243d;
+    color: white;
+}
+
+/* ===== FULLSCREEN SKY ===== */
+
+.sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: #15213b;
+    pointer-events: none;
+}
+
+.sky-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 3s ease;
+}
+
+.sky-night {
+    background: linear-gradient(
+        to bottom,
+        #15213b,
+        #394b68
+    );
+    opacity: 1;
+}
+
+.sky-dawn {
+    background: linear-gradient(
+        to bottom,
+        #718eae,
+        #efb19b
+    );
+}
+
+.sky-day {
+    background: linear-gradient(
+        to bottom,
+        #a8d5e8,
+        #e8f2ed
+    );
+}
+
+.sky-dusk {
+    background: linear-gradient(
+        to bottom,
+        #677d9b,
+        #e6a17f
+    );
+}
+
+/* ===== STARS ===== */
+
+.stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 3s ease;
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+}
+
+/* ===== MAIN LAYOUT ===== */
+
+.app {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 760px);
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 25px 24px 110px;
+}
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 40px;
+}
+
+.menu-button {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+/* ===== MAIN BALANCE ===== */
+
+.balance-card {
+    margin-top: 45px;
+    text-align: center;
+}
+
+.balance-value {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+#counter {
+    font-size: clamp(30px, 6vw, 62px);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.balance-unit {
+    font-size: clamp(14px, 2vw, 21px);
+    color: inherit;
+}
+
+/* ===== ASTRONOMICAL SCENE ===== */
+
+.sky-scene {
+    position: relative;
+    width: 100%;
+    height: 275px;
+    margin-top: 35px;
+}
+
+.sky-arc {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 230px;
+    color: white;
+    opacity: 0.23;
+    pointer-events: none;
+}
+
+/* ===== SUN AND MOON ===== */
+
+#celestial-body {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 3;
+}
+
+.sun {
+    position: absolute;
+    inset: 4px;
+    background: #f6c45d;
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 18px rgba(246,196,93,0.8),
+        0 0 35px rgba(246,196,93,0.35);
+
+    opacity: 0;
+    transition: opacity 2s ease;
+}
+
+.moon {
+    position: absolute;
+    inset: 5px;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border-radius: 50%;
+
+    box-shadow:
+        -7px 3px 0 1px #e8edf2,
+        -7px 3px 12px rgba(230,235,255,0.25);
+
+    opacity: 0;
+    transition: opacity 2s ease;
+}
+
+/* ===== ENERGY HORIZON ===== */
+
+.balance-scale {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 210px;
+    height: 24px;
+    border-radius: 20px;
+
+    background: linear-gradient(
+        to right,
+        #c65a5a 0%,
+        #e3a0a0 25%,
+        #d0d0d0 50%,
+        #a3cbb3 75%,
+        #36845b 100%
+    );
+
+    z-index: 4;
+}
+
+.scale-center {
+    position: absolute;
+    left: 50%;
+    top: -20px;
+    height: 64px;
+    border-left: 2px dashed rgba(255,255,255,0.65);
+}
+
+#scale-marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+
+    background: #111;
+    border: 3px solid white;
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+    transition: left 0.5s linear;
+}
+
+/* ===== ENERGY STATISTICS ===== */
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5px;
+}
+
+.stats > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    width: 50%;
+}
+
+.stats strong {
+    font-size: clamp(24px, 4vw, 34px);
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-out strong {
+    color: #e65a5a;
+}
+
+.stat-in strong {
+    color: #36845b;
+}
+
+.stats small {
+    font-size: 14px;
+    color: inherit;
+}
+
+/* ===== IN / OUT BUTTONS ===== */
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 28px;
+}
+
+.action-buttons button {
+    flex: 1;
+    min-width: 0;
+    padding: 18px;
+
+    border: none;
+    border-radius: 12px;
+
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.out-button {
+    background: #c64b4b;
+}
+
+.in-button {
+    background: #36845b;
+}
+
+.action-buttons button:hover {
+    filter: brightness(1.08);
+}
+
+/* ===== ENERGY INPUT ===== */
+
+.energy-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.energy-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.energy-form button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #2f2f2f;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.hidden,
+.energy-form.hidden {
+    display: none;
+}
+
+/* ===== SKY PREVIEW ===== */
+
+.sky-test {
+    position: fixed;
+    z-index: 10;
+    right: 20px;
+    bottom: 20px;
+
+    width: min(300px, calc(100% - 40px));
+    padding: 14px;
+
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.sky-test-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+#reset-preview {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+#time-slider {
+    width: 100%;
+    cursor: pointer;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 600px) {
+
+    .app {
+        padding: 18px 18px 110px;
+    }
+
+    .balance-card {
+        margin-top: 30px;
+    }
+
+    .sky-scene {
+        height: 255px;
+    }
+
+    .action-buttons {
+        gap: 12px;
+    }
+
+    .sky-test {
+        right: 12px;
+        bottom: 12px;
+    }
+}

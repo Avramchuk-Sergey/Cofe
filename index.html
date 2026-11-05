@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Cofe — Conservation of Energy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Fullscreen astronomical background -->
+<div class="sky" id="sky">
+    <div class="sky-layer sky-night"></div>
+    <div class="sky-layer sky-dawn"></div>
+    <div class="sky-layer sky-day"></div>
+    <div class="sky-layer sky-dusk"></div>
+    <div class="stars" id="stars"></div>
+</div>
+
+<main class="app">
+
+    <header class="header">
+        <button class="menu-button"
+                type="button"
+                aria-label="Menu">•••</button>
+    </header>
+
+    <section class="balance-card">
+
+        <!-- Main energy balance -->
+        <div class="balance-value">
+            <span id="counter">0.000</span>
+            <span class="balance-unit">kcal</span>
+        </div>
+
+        <!-- Astronomical arc and energy horizon -->
+        <div class="sky-scene">
+
+            <svg class="sky-arc"
+                 viewBox="0 0 600 230"
+                 preserveAspectRatio="none"
+                 aria-hidden="true">
+
+                <path
+                    id="time-arc"
+                    d="M 0 210 Q 300 -170 600 210"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-dasharray="4 7"
+                />
+            </svg>
+
+            <div id="celestial-body">
+                <div class="sun"></div>
+                <div class="moon"></div>
+            </div>
+
+            <div class="balance-scale">
+                <div class="scale-center"></div>
+                <div id="scale-marker"></div>
+            </div>
+
+        </div>
+
+        <!-- Energy statistics -->
+        <div class="stats">
+
+            <div class="stat-out">
+                <strong id="burned">0.0</strong>
+                <small>kcal</small>
+            </div>
+
+            <div class="stat-in">
+                <strong id="eaten">0.0</strong>
+                <small>kcal</small>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Energy controls -->
+    <div class="action-buttons">
+        <button id="open-out"
+                class="out-button"
+                type="button">out</button>
+
+        <button id="open-in"
+                class="in-button"
+                type="button">in</button>
+    </div>
+
+    <!-- Energy input -->
+    <section id="energy-form"
+             class="energy-form hidden">
+
+        <input
+            type="number"
+            id="calories"
+            placeholder="Energy (kcal)"
+            min="0"
+            step="any"
+        >
+
+        <button id="add-energy"
+                type="button">in</button>
+    </section>
+
+</main>
+
+<!-- Temporary sky testing controls -->
+<div class="sky-test">
+
+    <div class="sky-test-header">
+        <span>Sky preview</span>
+
+        <button id="reset-preview"
+                type="button"
+                title="Return to real time">
+            <strong id="preview-time">00:00</strong> ↺
+        </button>
+    </div>
+
+    <input
+        type="range"
+        id="time-slider"
+        min="0"
+        max="1439"
+        value="0"
+        step="1"
+        aria-label="Preview time of day"
+    >
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
