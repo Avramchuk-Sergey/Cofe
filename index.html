@@ -22,12 +22,28 @@
 
 <main class="app">
 
-    <header class="header">
-        <button class="menu-button"
-                type="button"
-                aria-label="Menu">•••</button>
-    </header>
+    
+<header class="header">
+    <button class="menu-button"
+            id="menu-button"
+            type="button"
+            aria-label="Menu"
+            aria-expanded="false">•••</button>
 
+    <nav id="main-menu" class="main-menu hidden">
+        <button id="open-profile" type="button">
+            Profile
+        </button>
+
+        <button id="open-journal" type="button">
+            Journal
+        </button>
+    </nav>
+</header>
+
+
+
+    <div id="home-screen">
     <section class="balance-card">
 
         <!-- Main energy balance -->
@@ -83,32 +99,86 @@
 
     </section>
 
-    <!-- Energy controls -->
+    <!-- One button opens the shared IN / OUT form -->
     <div class="action-buttons">
-        <button id="open-out"
-                class="out-button"
-                type="button">out</button>
-
-        <button id="open-in"
-                class="in-button"
-                type="button">in</button>
+        <button id="open-entry" class="add-entry-button" type="button"
+                aria-label="Add energy entry" aria-expanded="false">+</button>
     </div>
 
-    <!-- Energy input -->
-    <section id="energy-form"
-             class="energy-form hidden">
+    
+	</div>
+<form id="energy-form" class="energy-form hidden">
+        <div class="entry-heading">
+            <h2>Energy entry</h2>
+            <button id="close-entry" type="button" aria-label="Close form">×</button>
+        </div>
 
-        <input
-            type="number"
-            id="calories"
-            placeholder="Energy (kcal)"
-            min="0"
-            step="any"
-        >
+        <fieldset class="entry-type">
+            <legend>Type</legend>
+            <label><input type="radio" name="entry-type" value="in" checked> IN</label>
+            <label><input type="radio" name="entry-type" value="out"> OUT</label>
+        </fieldset>
 
-        <button id="add-energy"
-                type="button">in</button>
-    </section>
+        <label for="energy-description">Food / Activity</label>
+        <textarea id="energy-description" placeholder="What did you eat or do?"
+                  maxlength="200" rows="3" required></textarea>
+
+        <label for="calories">Energy (kcal)</label>
+        <input type="number" id="calories" placeholder="e.g. 450"
+               min="0.01" step="any" required>
+
+        <p class="entry-hint">Date and time are recorded automatically.</p>
+        <p id="entry-status" class="entry-status" role="status"></p>
+        <button id="add-energy" class="entry-save" type="submit">Save entry</button>
+    </form>
+	
+	
+<!-- ===== PROFILE SCREEN ===== -->
+
+<section id="profile-screen" class="profile-screen hidden">
+
+    <div class="profile-header">
+        <button id="close-profile" type="button">
+            ← Back
+        </button>
+
+        <h2>Profile</h2>
+    </div>
+
+    <form id="profile-form">
+
+        <label for="profile-sex">Sex</label>
+        <select id="profile-sex" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+
+        <label for="profile-birth">Date of birth</label>
+        <input id="profile-birth" type="date" required>
+
+        <label for="profile-height">Height (cm)</label>
+        <input id="profile-height"
+               type="number"
+               min="50"
+               max="250"
+               required>
+
+        <label for="profile-weight">Weight (kg)</label>
+        <input id="profile-weight"
+               type="number"
+               min="20"
+               max="400"
+               step="0.1"
+               required>
+
+<button type="submit" class="profile-save">
+            Save
+        </button>
+
+    </form>
+
+</section>
+
 
 </main>
 
@@ -137,6 +207,7 @@
 
 </div>
 
+<script src="db.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

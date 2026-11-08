@@ -1,7 +1,7 @@
 
 /* ===== COFE CONFIGURATION ===== */
 
-const dailyCalories = 2600;
+let dailyCalories = 2600;
 const dayMs = 86400000;
 
 // Minsk: UTC+3, no daylight saving time
@@ -19,8 +19,11 @@ const burnedElement = document.querySelector("#burned");
 const eatenElement = document.querySelector("#eaten");
 const scaleMarker = document.querySelector("#scale-marker");
 
-const outButton = document.querySelector("#open-out");
-const inButton = document.querySelector("#open-in");
+const openEntryButton = document.querySelector("#open-entry");
+const descriptionInput = document.querySelector("#energy-description");
+const entryTypeInputs = document.querySelectorAll('input[name="entry-type"]');
+const closeEntryButton = document.querySelector("#close-entry");
+const entryStatus = document.querySelector("#entry-status");
 
 const energyForm = document.querySelector("#energy-form");
 const caloriesInput = document.querySelector("#calories");
@@ -110,6 +113,7 @@ function formatTime(minutes) {
 let eatenCalories = 0;
 let extraBurnedCalories = 0;
 let inputMode = "in";
+let entriesLoadToken = 0;
 
 let activeDateKey = getMinskDateKey(new Date());
 
@@ -120,6 +124,7 @@ function checkNewDay() {
         activeDateKey = today;
         eatenCalories = 0;
         extraBurnedCalories = 0;
+        loadTodayEntries();
     }
 }
 
@@ -176,58 +181,85 @@ function updateCounter() {
 
 /* ===== ENERGY INPUT ===== */
 
-function openForm(mode) {
-    inputMode = mode;
+function closeEnergyForm() {
+    energyForm.classList.add("hidden");
+    homeScreen.classList.remove("hidden");
 
-    energyForm.classList.remove("hidden");
-    caloriesInput.value = "";
-
-    addEnergyButton.textContent = mode;
-
-    caloriesInput.focus();
+    openEntryButton.setAttribute("aria-expanded", "false");
+    entryStatus.textContent = "";
 }
 
-inButton.addEventListener("click", function() {
-    openForm("in");
+openEntryButton.addEventListener("click", function() {
+    homeScreen.classList.add("hidden");
+    energyForm.classList.remove("hidden");
+
+    openEntryButton.setAttribute("aria-expanded", "true");
+
+    energyForm.reset();
+    inputMode = "in";
+    entryStatus.textContent = "";
+    descriptionInput.focus();
 });
 
-outButton.addEventListener("click", function() {
-    openForm("out");
+closeEntryButton.addEventListener("click", closeEnergyForm);
+
+
+entryTypeInputs.forEach(function(radio) {
+    radio.addEventListener("change", function() {
+        if (radio.checked) inputMode = radio.value;
+    });
 });
 
-function addEnergy() {
-    checkNewDay();
-
+energyForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+    const description = descriptionInput.value.trim();
     const calories = Number(caloriesInput.value);
-
-    if (
-        !caloriesInput.value ||
-        !Number.isFinite(calories) ||
-        calories <= 0
-    ) {
+    if (!description || !Number.isFinite(calories) || calories <= 0) {
+        entryStatus.textContent = "Enter a description and positive kcal value.";
         return;
     }
 
-    if (inputMode === "in") {
-        eatenCalories += calories;
-    } else {
-        extraBurnedCalories += calories;
-    }
-
-    caloriesInput.value = "";
-    energyForm.classList.add("hidden");
-
-    updateCounter();
-}
-
-addEnergyButton.addEventListener("click", addEnergy);
-
-caloriesInput.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        addEnergy();
+    addEnergyButton.disabled = true;
+    entryStatus.textContent = "Saving...";
+    try {
+        await saveEntry({
+            type: inputMode,
+            description: description,
+            calories: calories,
+            timestamp: Date.now()
+        });
+        await loadTodayEntries();
+        closeEnergyForm();
+    } catch (error) {
+        console.error("Energy entry saving failed:", error);
+        entryStatus.textContent = "Could not save entry.";
+    } finally {
+        addEnergyButton.disabled = false;
     }
 });
 
+async function loadTodayEntries() {
+    const token = ++entriesLoadToken;
+    const dateKey = getMinskDateKey(new Date());
+    try {
+        const entries = await getEntries();
+        if (token !== entriesLoadToken || dateKey !== activeDateKey) return;
+        let eaten = 0;
+        let extraBurned = 0;
+        for (const entry of entries) {
+            if (getMinskDateKey(new Date(entry.timestamp)) !== dateKey) continue;
+            const value = Number(entry.calories);
+            if (!Number.isFinite(value) || value <= 0) continue;
+            if (entry.type === "in") eaten += value;
+            if (entry.type === "out") extraBurned += value;
+        }
+        eatenCalories = eaten;
+        extraBurnedCalories = extraBurned;
+        updateCounter();
+    } catch (error) {
+        console.error("Energy entries loading failed:", error);
+    }
+}
 
 /* ===== ASTRONOMICAL CALCULATIONS ===== */
 
@@ -609,3 +641,178 @@ document.addEventListener(
 
 // Keep celestial position aligned after resizing
 window.addEventListener("resize", updateSky);
+
+
+/* ===== MAIN MENU ===== */
+
+const menuButton = document.querySelector("#menu-button");
+const mainMenu = document.querySelector("#main-menu");
+
+menuButton.addEventListener("click", function() {
+    const isHidden = mainMenu.classList.toggle("hidden");
+
+    menuButton.setAttribute(
+        "aria-expanded",
+        String(!isHidden)
+    );
+});
+
+document.addEventListener("click", function(event) {
+    if (!event.target.closest(".header")) {
+        mainMenu.classList.add("hidden");
+        menuButton.setAttribute("aria-expanded", "false");
+    }
+});
+
+
+/* ===== SCREEN NAVIGATION ===== */
+
+const homeScreen = document.querySelector("#home-screen");
+const profileScreen = document.querySelector("#profile-screen");
+const skyTest = document.querySelector(".sky-test");
+
+const openProfileButton =
+    document.querySelector("#open-profile");
+
+const closeProfileButton =
+    document.querySelector("#close-profile");
+
+
+openProfileButton.addEventListener("click", async function() {
+    homeScreen.classList.add("hidden");
+    profileScreen.classList.remove("hidden");
+    skyTest.classList.add("hidden");
+
+    mainMenu.classList.add("hidden");
+    menuButton.setAttribute("aria-expanded", "false");
+
+    try {
+        const profile = await getProfile();
+
+        if (profile) {
+            document.querySelector("#profile-sex").value =
+                profile.sex;
+
+            document.querySelector("#profile-birth").value =
+                profile.birthDate;
+
+            document.querySelector("#profile-height").value =
+                profile.height;
+
+            document.querySelector("#profile-weight").value =
+                profile.weight;
+
+
+        }
+    } catch (error) {
+        console.error("Profile loading failed:", error);
+    }
+});
+
+
+closeProfileButton.addEventListener("click", function() {
+    profileScreen.classList.add("hidden");
+    homeScreen.classList.remove("hidden");
+    skyTest.classList.remove("hidden");
+});
+
+
+/* ===== PROFILE SAVE ===== */
+
+const profileForm = document.querySelector("#profile-form");
+
+profileForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const profile = {
+        sex: document.querySelector("#profile-sex").value,
+        birthDate: document.querySelector("#profile-birth").value,
+        height: Number(
+            document.querySelector("#profile-height").value
+        ),
+        weight: Number(
+            document.querySelector("#profile-weight").value
+        )
+    };
+	
+	
+try {
+    const oldProfile = await getProfile();
+
+    if (!oldProfile || Number(oldProfile.weight) !== profile.weight) {
+        await saveWeight(profile.weight);
+    }
+
+    await saveProfile(profile);
+	
+	dailyCalories = calculateDailyCalories(profile);
+    updateCounter();
+
+    alert("Profile saved successfully!");
+} catch (error) {
+    console.error("Profile saving failed:", error);
+    alert("Failed to save profile.");
+}
+
+});
+
+
+/* ===== BASAL METABOLIC RATE ===== */
+
+function calculateBMR(profile) {
+    const today = new Date();
+    const birth = new Date(profile.birthDate + "T00:00:00");
+
+    let age = today.getFullYear() - birth.getFullYear();
+
+    const birthdayPassed =
+        today.getMonth() > birth.getMonth() ||
+        (
+            today.getMonth() === birth.getMonth() &&
+            today.getDate() >= birth.getDate()
+        );
+
+    if (!birthdayPassed) {
+        age--;
+    }
+
+    const sexConstant = profile.sex === "male" ? 5 : -161;
+
+    return (
+        10 * profile.weight +
+        6.25 * profile.height -
+        5 * age +
+        sexConstant
+    );
+}
+
+
+/* ===== DAILY ENERGY EXPENDITURE ===== */
+
+function calculateDailyCalories(profile) {
+    // Fixed sedentary baseline. Extra activity is entered manually as OUT.
+    return calculateBMR(profile) * 1.2;
+}
+
+
+/* ===== LOAD DAILY ENERGY EXPENDITURE ===== */
+
+async function loadDailyCalories() {
+    try {
+        const profile = await getProfile();
+
+        if (profile) {
+            dailyCalories = calculateDailyCalories(profile);
+            updateCounter();
+        }
+    } catch (error) {
+        console.error("Daily calories loading failed:", error);
+    }
+}
+
+loadDailyCalories();
+loadTodayEntries();
+
+
+
+
