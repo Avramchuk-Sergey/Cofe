@@ -42,11 +42,6 @@ const dawnLayer = document.querySelector(".sky-dawn");
 const dayLayer = document.querySelector(".sky-day");
 const duskLayer = document.querySelector(".sky-dusk");
 
-const timeSlider = document.querySelector("#time-slider");
-const previewTime = document.querySelector("#preview-time");
-const resetPreviewButton =
-    document.querySelector("#reset-preview");
-
 
 /* ===== TIME HELPERS ===== */
 
@@ -395,26 +390,9 @@ for (let i = 0; i < 35; i++) {
 }
 
 
-/* ===== SKY PREVIEW STATE ===== */
-
-let previewMinutes = null;
-
 function getSkyTime() {
-    const now = new Date();
-
-    if (previewMinutes === null) {
-        return now;
-    }
-
-    // Construct selected time on today's Minsk date
-    const midnight = getMinskMidnight(now);
-
-    return new Date(
-        midnight.getTime() +
-        previewMinutes * 60000
-    );
+    return new Date();
 }
-
 
 /* ===== SKY BACKGROUND ===== */
 
@@ -579,42 +557,7 @@ function updateSky() {
 
     document.body.style.color = textColor;
 
-    // Update preview display in real-time mode
-    if (previewMinutes === null) {
-        const minutes = getMinskMinutes(new Date());
-
-        timeSlider.value = minutes;
-        previewTime.textContent = formatTime(minutes);
-    }
 }
-
-
-/* ===== PREVIEW CONTROLS ===== */
-
-function setPreviewTime(minutes) {
-    previewMinutes = Math.max(
-        0,
-        Math.min(1439, minutes)
-    );
-
-    timeSlider.value = previewMinutes;
-    previewTime.textContent =
-        formatTime(previewMinutes);
-
-    updateSky();
-}
-
-timeSlider.addEventListener("input", function() {
-    setPreviewTime(Number(timeSlider.value));
-});
-
-resetPreviewButton.addEventListener(
-    "click",
-    function() {
-        previewMinutes = null;
-        updateSky();
-    }
-);
 
 
 /* ===== INITIALIZATION ===== */
@@ -669,7 +612,6 @@ document.addEventListener("click", function(event) {
 
 const homeScreen = document.querySelector("#home-screen");
 const profileScreen = document.querySelector("#profile-screen");
-const skyTest = document.querySelector(".sky-test");
 
 const openProfileButton =
     document.querySelector("#open-profile");
@@ -681,7 +623,6 @@ const closeProfileButton =
 openProfileButton.addEventListener("click", async function() {
     homeScreen.classList.add("hidden");
     profileScreen.classList.remove("hidden");
-    skyTest.classList.add("hidden");
 
     mainMenu.classList.add("hidden");
     menuButton.setAttribute("aria-expanded", "false");
@@ -713,7 +654,6 @@ openProfileButton.addEventListener("click", async function() {
 closeProfileButton.addEventListener("click", function() {
     profileScreen.classList.add("hidden");
     homeScreen.classList.remove("hidden");
-    skyTest.classList.remove("hidden");
 });
 
 

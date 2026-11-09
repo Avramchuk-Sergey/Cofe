@@ -329,47 +329,7 @@ body {
 .entry-status:empty { display: none; }
 .entry-save { padding: 14px; border: 0; border-radius: 9px; background: #36845b; color: white; font-size: 16px; font-weight: bold; cursor: pointer; }
 .entry-save:disabled { opacity: .6; cursor: wait; }
-.hidden, .energy-form.hidden, .sky-test.hidden { display: none; }
-
-/* ===== SKY PREVIEW ===== */
-
-.sky-test {
-    position: fixed;
-    z-index: 10;
-    right: 20px;
-    bottom: 20px;
-
-    width: min(300px, calc(100% - 40px));
-    padding: 14px;
-
-    background: rgba(255,255,255,0.14);
-    border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 12px;
-
-    color: white;
-    backdrop-filter: blur(10px);
-}
-
-.sky-test-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    font-size: 13px;
-}
-
-#reset-preview {
-    background: transparent;
-    border: none;
-    color: inherit;
-    font-size: 13px;
-    cursor: pointer;
-}
-
-#time-slider {
-    width: 100%;
-    cursor: pointer;
-}
+.hidden, .energy-form.hidden { display: none; }
 
 /* ===== MOBILE ===== */
 
@@ -389,11 +349,6 @@ body {
 
     .action-buttons {
         gap: 12px;
-    }
-
-    .sky-test {
-        right: 12px;
-        bottom: 12px;
     }
 }
 
