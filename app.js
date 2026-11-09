@@ -814,5 +814,20 @@ loadDailyCalories();
 loadTodayEntries();
 
 
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker
+            .register("./service-worker.js")
+            .then(() => {
+                console.log("Cofe Service Worker registered");
+            })
+            .catch((error) => {
+                console.error("Service Worker registration failed:", error);
+            });
+    });
+}
+
+
+
 
 
