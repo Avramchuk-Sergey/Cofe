@@ -482,3 +482,15 @@ body {
     color: #36845b;
 }
 
+/* ===== HOME SCREEN LAYOUT ===== */
+
+#home-screen {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+#home-screen.hidden {
+    display: none;
+}
+
