@@ -120,7 +120,7 @@ body {
 /* ===== MAIN BALANCE ===== */
 
 .balance-card {
-    margin-top: 45px;
+    margin-top: auto;
     text-align: center;
 }
 
@@ -149,7 +149,7 @@ body {
     position: relative;
     width: 100%;
     height: 275px;
-    margin-top: 35px;
+    margin-top: auto;
 }
 
 .sky-arc {
@@ -287,7 +287,7 @@ body {
 .action-buttons {
     display: flex;
     justify-content: center;
-    margin-top: 45px;
+    margin-top: auto;
 }
 .add-entry-button {
     flex: 0 0 64px;
@@ -345,7 +345,7 @@ body {
     }
 
     .balance-card {
-        margin-top: 30px;
+        margin-top: auto;
     }
 
     .sky-scene {
@@ -498,27 +498,29 @@ body {
 }
 
 
-/* ===== VIEWPORT-BASED HOME LAYOUT =====
-   The app has a definite viewport height, so the home screen's
-   flexible space can push the signature to the bottom.
-   Short screens reduce spacing rather than hiding content.
-   Forms and profile retain their natural scrollability. ===== */
+/* ===== RESPONSIVE HOME LAYOUT =====
+   Four auto margins share free vertical space between the balance,
+   sky scene, add button and footer. The footer stays at the bottom.
+   The sky scene keeps its internal geometry unchanged. */
 
-.header, .balance-card, .action-buttons, .cofe-signature {
+.header, .balance-card, .sky-scene, .stats,
+.action-buttons, .cofe-signature {
     flex-shrink: 0;
 }
 
-@media (max-height: 740px) {
-    .app { padding-top: 12px; padding-bottom: 10px; }
-    .balance-card { margin-top: 12px; }
-    .sky-scene { margin-top: 16px; height: 240px; }
-    .action-buttons { margin-top: 18px; }
-    .cofe-signature { padding-top: 8px; }
-}
-
 @media (max-height: 620px) {
-    /* A short viewport cannot always fit the full astronomical scene.
-       Allow scrolling instead of clipping controls. */
-    .app { height: auto; min-height: 100dvh; }
-    #home-screen { flex: 1 0 auto; }
+    .app {
+        height: auto;
+        min-height: 100dvh;
+        padding-top: 12px;
+        padding-bottom: 10px;
+    }
+
+    #home-screen {
+        flex: 1 0 auto;
+    }
+
+    .sky-scene {
+        height: 240px;
+    }
 }
