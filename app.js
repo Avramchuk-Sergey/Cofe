@@ -109,6 +109,7 @@ let eatenCalories = 0;
 let extraBurnedCalories = 0;
 let inputMode = "in";
 let entriesLoadToken = 0;
+let energyDataReady = false;
 
 let activeDateKey = getMinskDateKey(new Date());
 
@@ -127,6 +128,8 @@ function checkNewDay() {
 /* ===== ENERGY COUNTER ===== */
 
 function updateCounter() {
+	if (!energyDataReady) return;
+	
     checkNewDay();
 
     const now = new Date();
@@ -182,6 +185,8 @@ function closeEnergyForm() {
 
     openEntryButton.setAttribute("aria-expanded", "false");
     entryStatus.textContent = "";
+
+    updateSky();
 }
 
 openEntryButton.addEventListener("click", function() {
@@ -750,8 +755,10 @@ async function loadDailyCalories() {
     }
 }
 
-loadDailyCalories();
-loadTodayEntries();
+Promise.all([loadDailyCalories(), loadTodayEntries()]).then(() => {
+    energyDataReady = true;
+    updateCounter();
+});
 
 
 if ("serviceWorker" in navigator) {

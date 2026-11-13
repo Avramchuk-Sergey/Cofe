@@ -336,7 +336,7 @@ body {
 @media (max-width: 600px) {
 
     .app {
-        padding: 18px 18px 110px;
+        padding: 18px 18px 30px;
     }
 
     .balance-card {
