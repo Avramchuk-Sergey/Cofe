@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "cofe-v7";
+const CACHE_NAME = "cofe-v8";
 
 const FILES_TO_CACHE = [
     "./",
