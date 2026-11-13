@@ -95,7 +95,9 @@ body {
     width: min(100%, 760px);
     min-height: 100vh;
     margin: 0 auto;
-    padding: 25px 24px 110px;
+    padding: 25px 24px 20px;
+	display: flex;
+    flex-direction: column; 
 }
 
 .header {
@@ -109,7 +111,7 @@ body {
     background: transparent;
     border: none;
     color: inherit;
-    font-size: 25px;
+    font-size: 22px;
     cursor: pointer;
 }
 
@@ -283,7 +285,7 @@ body {
 .action-buttons {
     display: flex;
     justify-content: center;
-    margin-top: 28px;
+    margin-top: 45px;
 }
 .add-entry-button {
     flex: 0 0 64px;
@@ -337,7 +339,7 @@ body {
 @media (max-width: 600px) {
 
     .app {
-        padding: 18px 18px 30px;
+        padding: 18px 18px 12px;
     }
 
     .balance-card {
@@ -464,4 +466,19 @@ body {
     cursor: pointer;
 }
 
+/* ===== COFE SIGNATURE ===== */
+
+.cofe-signature {
+    margin-top: auto;
+    padding-top: 25px;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.cofe-signature span {
+    font-weight: 700;
+    color: #36845b;
+}
 
