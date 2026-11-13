@@ -93,7 +93,9 @@ body {
     position: relative;
     z-index: 1;
     width: min(100%, 760px);
-    min-height: 100vh;
+    height: 100vh; /* fallback */
+    height: 100dvh; /* actual available mobile viewport */
+    min-height: 0;
     margin: 0 auto;
     padding: 25px 24px 20px;
 	display: flex;
@@ -470,7 +472,7 @@ body {
 
 .cofe-signature {
     margin-top: auto;
-    padding-top: 25px;
+    padding-top: 8px;
     text-align: center;
     font-size: 12px;
     letter-spacing: 1px;
@@ -487,10 +489,36 @@ body {
 #home-screen {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 #home-screen.hidden {
     display: none;
 }
 
+
+/* ===== VIEWPORT-BASED HOME LAYOUT =====
+   The app has a definite viewport height, so the home screen's
+   flexible space can push the signature to the bottom.
+   Short screens reduce spacing rather than hiding content.
+   Forms and profile retain their natural scrollability. ===== */
+
+.header, .balance-card, .action-buttons, .cofe-signature {
+    flex-shrink: 0;
+}
+
+@media (max-height: 740px) {
+    .app { padding-top: 12px; padding-bottom: 10px; }
+    .balance-card { margin-top: 12px; }
+    .sky-scene { margin-top: 16px; height: 240px; }
+    .action-buttons { margin-top: 18px; }
+    .cofe-signature { padding-top: 8px; }
+}
+
+@media (max-height: 620px) {
+    /* A short viewport cannot always fit the full astronomical scene.
+       Allow scrolling instead of clipping controls. */
+    .app { height: auto; min-height: 100dvh; }
+    #home-screen { flex: 1 0 auto; }
+}
