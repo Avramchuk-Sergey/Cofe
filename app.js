@@ -22,28 +22,16 @@ import {
 } from "./js/screens/home.js";
 
 import {
-    showScreen,
-    getCurrentScreen
+    showScreen
 } from "./js/navigation.js";
+
+import { initEntry }
+from "./js/screens/entry.js";
 
 
 /* ===== COFE CONFIGURATION ===== */
 
 let dailyCalories = DEFAULT_DAILY_CALORIES;
-
-/* ===== ELEMENTS ===== */
-
-const openEntryButton = document.querySelector("#open-entry");
-const descriptionInput = document.querySelector("#energy-description");
-const entryTypeInputs = document.querySelectorAll('input[name="entry-type"]');
-const closeEntryButton = document.querySelector("#close-entry");
-const entryStatus = document.querySelector("#entry-status");
-
-const energyForm = document.querySelector("#energy-form");
-const caloriesInput = document.querySelector("#calories");
-const addEnergyButton = document.querySelector("#add-energy");
-
-
 
 
 /* ===== ENERGY DATA ===== */
@@ -53,7 +41,6 @@ const addEnergyButton = document.querySelector("#add-energy");
 
 let eatenCalories = 0;
 let extraBurnedCalories = 0;
-let inputMode = "in";
 let entriesLoadToken = 0;
 let energyDataReady = false;
 
@@ -95,64 +82,6 @@ function updateCounter() {
 }
 
 
-/* ===== ENERGY INPUT ===== */
-
-function closeEnergyForm() {
-    entryStatus.textContent = "";
-
-    if (getCurrentScreen() === "entry") {
-        showScreen("home");
-        updateSky();
-    }
-}
-
-openEntryButton.addEventListener("click", function() {
-    energyForm.reset();
-    inputMode = "in";
-    entryStatus.textContent = "";
-
-    showScreen("entry");
-
-    descriptionInput.focus();
-});
-
-closeEntryButton.addEventListener("click", closeEnergyForm);
-
-
-entryTypeInputs.forEach(function(radio) {
-    radio.addEventListener("change", function() {
-        if (radio.checked) inputMode = radio.value;
-    });
-});
-
-energyForm.addEventListener("submit", async function(event) {
-    event.preventDefault();
-    const description = descriptionInput.value.trim();
-    const calories = Number(caloriesInput.value);
-    if (!description || !Number.isFinite(calories) || calories <= 0) {
-        entryStatus.textContent = "Enter a description and positive kcal value.";
-        return;
-    }
-
-    addEnergyButton.disabled = true;
-    entryStatus.textContent = "Saving...";
-    try {
-        await saveEntry({
-            type: inputMode,
-            description: description,
-            calories: calories,
-            timestamp: Date.now()
-        });
-        await loadTodayEntries();
-        closeEnergyForm();
-    } catch (error) {
-        console.error("Energy entry saving failed:", error);
-        entryStatus.textContent = "Could not save entry.";
-    } finally {
-        addEnergyButton.disabled = false;
-    }
-});
-
 async function loadTodayEntries() {
     const token = ++entriesLoadToken;
     const dateKey = getMinskDateKey(new Date());
@@ -180,6 +109,7 @@ async function loadTodayEntries() {
 
 showScreen("home");
 initHome(updateCounter);
+initEntry(loadTodayEntries);
 
 
 /* ===== SCREEN NAVIGATION ===== */
