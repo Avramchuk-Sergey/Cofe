@@ -19,6 +19,11 @@ from "./js/ui/sky.js";
 import { renderCounter } 
 from "./js/ui/counter.js";
 
+import {
+    showScreen,
+    getCurrentScreen
+} from "./js/navigation.js";
+
 
 /* ===== COFE CONFIGURATION ===== */
 
@@ -91,24 +96,21 @@ function updateCounter() {
 /* ===== ENERGY INPUT ===== */
 
 function closeEnergyForm() {
-    energyForm.classList.add("hidden");
-    homeScreen.classList.remove("hidden");
-
-    openEntryButton.setAttribute("aria-expanded", "false");
     entryStatus.textContent = "";
 
-    updateSky();
+    if (getCurrentScreen() === "entry") {
+        showScreen("home");
+        updateSky();
+    }
 }
 
 openEntryButton.addEventListener("click", function() {
-    homeScreen.classList.add("hidden");
-    energyForm.classList.remove("hidden");
-
-    openEntryButton.setAttribute("aria-expanded", "true");
-
     energyForm.reset();
     inputMode = "in";
     entryStatus.textContent = "";
+
+    showScreen("entry");
+
     descriptionInput.focus();
 });
 
@@ -172,11 +174,9 @@ async function loadTodayEntries() {
     }
 }
 
-
-
-
-
 /* ===== INITIALIZATION ===== */
+
+showScreen("home");
 
 updateCounter();
 updateSky();
@@ -201,33 +201,8 @@ document.addEventListener(
 // Keep celestial position aligned after resizing
 window.addEventListener("resize", updateSky);
 
-
-/* ===== MAIN MENU ===== */
-
-const menuButton = document.querySelector("#menu-button");
-const mainMenu = document.querySelector("#main-menu");
-
-menuButton.addEventListener("click", function() {
-    const isHidden = mainMenu.classList.toggle("hidden");
-
-    menuButton.setAttribute(
-        "aria-expanded",
-        String(!isHidden)
-    );
-});
-
-document.addEventListener("click", function(event) {
-    if (!event.target.closest(".header")) {
-        mainMenu.classList.add("hidden");
-        menuButton.setAttribute("aria-expanded", "false");
-    }
-});
-
-
 /* ===== SCREEN NAVIGATION ===== */
 
-const homeScreen = document.querySelector("#home-screen");
-const profileScreen = document.querySelector("#profile-screen");
 
 const openProfileButton =
     document.querySelector("#open-profile");
@@ -237,11 +212,7 @@ const closeProfileButton =
 
 
 openProfileButton.addEventListener("click", async function() {
-    homeScreen.classList.add("hidden");
-    profileScreen.classList.remove("hidden");
-
-    mainMenu.classList.add("hidden");
-    menuButton.setAttribute("aria-expanded", "false");
+    showScreen("profile");
 
     try {
         const profile = await getProfile();
@@ -268,8 +239,8 @@ openProfileButton.addEventListener("click", async function() {
 
 
 closeProfileButton.addEventListener("click", function() {
-    profileScreen.classList.add("hidden");
-    homeScreen.classList.remove("hidden");
+    showScreen("home");
+    updateSky();
 });
 
 
