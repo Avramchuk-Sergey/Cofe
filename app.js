@@ -13,9 +13,6 @@ import {
     calculateEnergyBalance
 } from "./js/core/energy.js";
 
-import { updateSky } 
-from "./js/ui/sky.js";
-
 import {
     initHome,
     updateHomeCounter
@@ -27,6 +24,9 @@ import {
 
 import { initEntry }
 from "./js/screens/entry.js";
+
+import { initProfile }
+from "./js/screens/profile.js";
 
 
 /* ===== COFE CONFIGURATION ===== */
@@ -111,87 +111,9 @@ showScreen("home");
 initHome(updateCounter);
 initEntry(loadTodayEntries);
 
-
-/* ===== SCREEN NAVIGATION ===== */
-
-
-const openProfileButton =
-    document.querySelector("#open-profile");
-
-const closeProfileButton =
-    document.querySelector("#close-profile");
-
-
-openProfileButton.addEventListener("click", async function() {
-    showScreen("profile");
-
-    try {
-        const profile = await getProfile();
-
-        if (profile) {
-            document.querySelector("#profile-sex").value =
-                profile.sex;
-
-            document.querySelector("#profile-birth").value =
-                profile.birthDate;
-
-            document.querySelector("#profile-height").value =
-                profile.height;
-
-            document.querySelector("#profile-weight").value =
-                profile.weight;
-
-
-        }
-    } catch (error) {
-        console.error("Profile loading failed:", error);
-    }
-});
-
-
-closeProfileButton.addEventListener("click", function() {
-    showScreen("home");
-    updateSky();
-});
-
-
-/* ===== PROFILE SAVE ===== */
-
-const profileForm = document.querySelector("#profile-form");
-
-profileForm.addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const profile = {
-        sex: document.querySelector("#profile-sex").value,
-        birthDate: document.querySelector("#profile-birth").value,
-        height: Number(
-            document.querySelector("#profile-height").value
-        ),
-        weight: Number(
-            document.querySelector("#profile-weight").value
-        )
-    };
-	
-	
-try {
-    const oldProfile = await getProfile();
-
-    if (!oldProfile || Number(oldProfile.weight) !== profile.weight) {
-        await saveWeight(profile.weight);
-    }
-
-    await saveProfile(profile);
-	
-	dailyCalories = calculateDailyCalories(profile);
+initProfile(function(profile) {
+    dailyCalories = calculateDailyCalories(profile);
     updateCounter();
-
-    alert("Profile saved successfully!");
-} catch (error) {
-    console.error("Profile saving failed:", error);
-    alert("Failed to save profile.");
-}
-
 });
 
 
