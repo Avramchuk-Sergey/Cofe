@@ -36,8 +36,7 @@ let dailyCalories = DEFAULT_DAILY_CALORIES;
 
 /* ===== ENERGY DATA ===== */
 
-// Temporary in-memory data for the prototype.
-// Persistent journal will be added later.
+// Current daily energy totals loaded from IndexedDB.
 
 let eatenCalories = 0;
 let extraBurnedCalories = 0;
@@ -74,11 +73,11 @@ function updateCounter() {
             new Date()
         );
 
-   updateHomeCounter(
-    balance,
-    burnedCalories,
-    eatenCalories
-);
+    updateHomeCounter(
+        balance,
+        burnedCalories,
+        eatenCalories
+    );
 }
 
 

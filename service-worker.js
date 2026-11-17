@@ -1,13 +1,31 @@
 
-const CACHE_NAME = "cofe-v8";
+const CACHE_NAME = "cofe-v9";
 
 const FILES_TO_CACHE = [
     "./",
     "./index.html",
-    "./style.css",
+    "./css/base.css",
+    "./css/sky.css",
+    "./css/home.css",
+    "./css/screens.css",
     "./app.js",
     "./db.js",
     "./manifest.json",
+
+    "./js/config.js",
+    "./js/navigation.js",
+
+    "./js/core/time.js",
+    "./js/core/energy.js",
+    "./js/core/astronomy.js",
+
+    "./js/ui/sky.js",
+    "./js/ui/counter.js",
+
+    "./js/screens/home.js",
+    "./js/screens/entry.js",
+    "./js/screens/profile.js",
+
     "./icons/icon-192.png",
     "./icons/icon-512.png"
 ];

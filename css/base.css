@@ -1,0 +1,69 @@
+/* ===== BASE ===== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    overscroll-behavior-y: contain;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #17243d;
+    color: white;
+}
+
+/* ===== MAIN LAYOUT ===== */
+
+.app {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 760px);
+    height: 100vh; /* fallback */
+    height: 100dvh; /* actual available mobile viewport */
+    min-height: 0;
+    margin: 0 auto;
+    padding: 25px 24px 20px;
+	display: flex;
+    flex-direction: column; 
+}
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 40px;
+}
+
+.menu-button {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* ===== RESPONSIVE LAYOUT ===== */
+
+.header {
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+    .app {
+        padding: 18px 18px 12px;
+    }
+}
+
+@media (max-height: 620px) {
+    .app {
+        height: auto;
+        min-height: 100dvh;
+        padding-top: 12px;
+        padding-bottom: 10px;
+    }
+}
