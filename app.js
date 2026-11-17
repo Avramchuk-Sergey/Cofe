@@ -12,6 +12,11 @@ import {
     getMinskDateKey
 } from "./js/core/time.js";
 
+import {
+    calculateDailyCalories,
+    calculateEnergyBalance
+} from "./js/core/energy.js";
+
 
 /* ===== COFE CONFIGURATION ===== */
 
@@ -81,19 +86,13 @@ function updateCounter() {
 	
     checkNewDay();
 
-    const now = new Date();
-    const midnight = getMinskMidnight(now);
-
-    const elapsed = now - midnight;
-
-    const baseBurned =
-        dailyCalories * elapsed / DAY_MS;
-
-    const burnedCalories =
-        baseBurned + extraBurnedCalories;
-
-    const balance =
-        eatenCalories - burnedCalories;
+    const { burnedCalories, balance } =
+    calculateEnergyBalance(
+        dailyCalories,
+        eatenCalories,
+        extraBurnedCalories,
+        new Date()
+    );
 
     // Main balance
     counter.textContent =
@@ -649,44 +648,6 @@ try {
 }
 
 });
-
-
-/* ===== BASAL METABOLIC RATE ===== */
-
-function calculateBMR(profile) {
-    const today = new Date();
-    const birth = new Date(profile.birthDate + "T00:00:00");
-
-    let age = today.getFullYear() - birth.getFullYear();
-
-    const birthdayPassed =
-        today.getMonth() > birth.getMonth() ||
-        (
-            today.getMonth() === birth.getMonth() &&
-            today.getDate() >= birth.getDate()
-        );
-
-    if (!birthdayPassed) {
-        age--;
-    }
-
-    const sexConstant = profile.sex === "male" ? 5 : -161;
-
-    return (
-        10 * profile.weight +
-        6.25 * profile.height -
-        5 * age +
-        sexConstant
-    );
-}
-
-
-/* ===== DAILY ENERGY EXPENDITURE ===== */
-
-function calculateDailyCalories(profile) {
-    // Fixed sedentary baseline. Extra activity is entered manually as OUT.
-    return calculateBMR(profile) * 1.2;
-}
 
 
 /* ===== LOAD DAILY ENERGY EXPENDITURE ===== */
