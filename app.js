@@ -16,8 +16,10 @@ import {
 import { updateSky } 
 from "./js/ui/sky.js";
 
-import { renderCounter } 
-from "./js/ui/counter.js";
+import {
+    initHome,
+    updateHomeCounter
+} from "./js/screens/home.js";
 
 import {
     showScreen,
@@ -85,11 +87,11 @@ function updateCounter() {
             new Date()
         );
 
-    renderCounter(
-        balance,
-        burnedCalories,
-        eatenCalories
-    );
+   updateHomeCounter(
+    balance,
+    burnedCalories,
+    eatenCalories
+);
 }
 
 
@@ -177,29 +179,8 @@ async function loadTodayEntries() {
 /* ===== INITIALIZATION ===== */
 
 showScreen("home");
+initHome(updateCounter);
 
-updateCounter();
-updateSky();
-
-// Live energy balance
-setInterval(updateCounter, 1000);
-
-// Astronomical sky
-setInterval(updateSky, 60000);
-
-// Refresh after returning to the browser tab
-document.addEventListener(
-    "visibilitychange",
-    function() {
-        if (!document.hidden) {
-            updateCounter();
-            updateSky();
-        }
-    }
-);
-
-// Keep celestial position aligned after resizing
-window.addEventListener("resize", updateSky);
 
 /* ===== SCREEN NAVIGATION ===== */
 
