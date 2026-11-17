@@ -1,16 +1,21 @@
+/* ===== IMPORTS ===== */
+
+import {
+    DEFAULT_DAILY_CALORIES,
+    DAY_MS,
+    LOCATION
+} from "./js/config.js";
+
+import {
+    getMinskParts,
+    getMinskMidnight,
+    getMinskDateKey
+} from "./js/core/time.js";
+
 
 /* ===== COFE CONFIGURATION ===== */
 
-let dailyCalories = 2600;
-const dayMs = 86400000;
-
-// Minsk: UTC+3, no daylight saving time
-const minskOffsetMs = 3 * 60 * 60 * 1000;
-
-// Minsk coordinates
-const latitude = 53.9006;
-const longitude = 27.5590;
-
+let dailyCalories = DEFAULT_DAILY_CALORIES;
 
 /* ===== ELEMENTS ===== */
 
@@ -42,62 +47,6 @@ const dawnLayer = document.querySelector(".sky-dawn");
 const dayLayer = document.querySelector(".sky-day");
 const duskLayer = document.querySelector(".sky-dusk");
 
-
-/* ===== TIME HELPERS ===== */
-
-// Returns calendar components in Minsk time.
-// UTC getters are used on a shifted timestamp.
-function getMinskParts(date) {
-    const shifted = new Date(
-        date.getTime() + minskOffsetMs
-    );
-
-    return {
-        year: shifted.getUTCFullYear(),
-        month: shifted.getUTCMonth(),
-        day: shifted.getUTCDate(),
-        hours: shifted.getUTCHours(),
-        minutes: shifted.getUTCMinutes(),
-        seconds: shifted.getUTCSeconds()
-    };
-}
-
-// Midnight in Minsk, expressed as a real timestamp
-function getMinskMidnight(date) {
-    const p = getMinskParts(date);
-
-    return new Date(
-        Date.UTC(p.year, p.month, p.day) -
-        minskOffsetMs
-    );
-}
-
-function getMinskDateKey(date) {
-    const p = getMinskParts(date);
-
-    return (
-        p.year + "-" +
-        String(p.month + 1).padStart(2, "0") + "-" +
-        String(p.day).padStart(2, "0")
-    );
-}
-
-function getMinskMinutes(date) {
-    const p = getMinskParts(date);
-
-    return p.hours * 60 + p.minutes;
-}
-
-function formatTime(minutes) {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-
-    return (
-        String(hours).padStart(2, "0") +
-        ":" +
-        String(mins).padStart(2, "0")
-    );
-}
 
 
 /* ===== ENERGY DATA ===== */
@@ -138,7 +87,7 @@ function updateCounter() {
     const elapsed = now - midnight;
 
     const baseBurned =
-        dailyCalories * elapsed / dayMs;
+        dailyCalories * elapsed / DAY_MS;
 
     const burnedCalories =
         baseBurned + extraBurnedCalories;
@@ -267,13 +216,13 @@ const rad = Math.PI / 180;
 const J0 = 0.0009;
 
 function toJulian(date) {
-    return date.valueOf() / dayMs -
+    return date.valueOf() / DAY_MS -
         0.5 + 2440588;
 }
 
 function fromJulian(j) {
     return new Date(
-        (j + 0.5 - 2440588) * dayMs
+        (j + 0.5 - 2440588) * DAY_MS
     );
 }
 
@@ -334,8 +283,8 @@ function hourAngle(h, phi, dec) {
 }
 
 function getSunTimes(date) {
-    const lw = -longitude * rad;
-    const phi = latitude * rad;
+    const lw = -LOCATION.longitude * rad;
+    const phi = LOCATION.latitude * rad;
 
     const p = getMinskParts(date);
 
@@ -438,7 +387,7 @@ function updateSky() {
 
     // Progress through the 24-hour arc
     const progress =
-        (now - midnight) / dayMs;
+        (now - midnight) / DAY_MS;
 
     const t = clamp01(progress);
 
