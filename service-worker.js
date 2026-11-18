@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "cofe-v9";
+const CACHE_NAME = "cofe-v10";
 
 const FILES_TO_CACHE = [
     "./",
@@ -27,7 +27,8 @@ const FILES_TO_CACHE = [
     "./js/screens/profile.js",
 
     "./icons/icon-192.png",
-    "./icons/icon-512.png"
+    "./icons/icon-512.png",
+	"./js/screens/journal.js"
 ];
 
 self.addEventListener("install", (event) => {
