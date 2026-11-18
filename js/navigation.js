@@ -3,7 +3,8 @@
 const screens = {
     home: document.querySelector("#home-screen"),
     entry: document.querySelector("#energy-form"),
-    profile: document.querySelector("#profile-screen")
+    profile: document.querySelector("#profile-screen"),
+	journal: document.querySelector("#journal-screen")
 };
 
 const openEntryButton = document.querySelector("#open-entry");
