@@ -1,18 +1,24 @@
 import { DAY_MS } from "../config.js";
-import { getMinskMidnight } from "./time.js";
+import {
+    getMinskMidnight,
+    getMinskParts
+} from "./time.js";
 
 // Mifflin–St Jeor equation
-function calculateBMR(profile) {
-    const today = new Date();
-    const birth = new Date(profile.birthDate + "T00:00:00");
+// Mifflin–St Jeor equation
+function calculateBMR(profile, date) {
+    const { year, month, day } = getMinskParts(date);
 
-    let age = today.getFullYear() - birth.getFullYear();
+    const [birthYear, birthMonth, birthDay] =
+        profile.birthDate.split("-").map(Number);
+
+    let age = year - birthYear;
 
     const birthdayPassed =
-        today.getMonth() > birth.getMonth() ||
+        month + 1 > birthMonth ||
         (
-            today.getMonth() === birth.getMonth() &&
-            today.getDate() >= birth.getDate()
+            month + 1 === birthMonth &&
+            day >= birthDay
         );
 
     if (!birthdayPassed) {
@@ -30,8 +36,8 @@ function calculateBMR(profile) {
 }
 
 // Daily energy expenditure
-export function calculateDailyCalories(profile) {
-    return calculateBMR(profile) * 1.2;
+export function calculateDailyCalories(profile, date = new Date()) {
+    return calculateBMR(profile, date) * 1.2;
 }
 
 // Baseline energy expenditure since midnight

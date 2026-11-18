@@ -1,17 +1,11 @@
 import { showScreen } from "../navigation.js";
 import { updateSky } from "../ui/sky.js";
 import { openEditEntry } from "./entry.js";
+import { loadEnergyHistory } from "../core/history.js";
 
 const journalContent = document.querySelector("#journal-content");
 const openJournalButton = document.querySelector("#open-journal");
 const closeJournalButton = document.querySelector("#close-journal");
-
-const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
-    timeZone: "Europe/Minsk",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-});
 
 const timeFormatter = new Intl.DateTimeFormat("ru-RU", {
     timeZone: "Europe/Minsk",
@@ -19,26 +13,6 @@ const timeFormatter = new Intl.DateTimeFormat("ru-RU", {
     minute: "2-digit"
 });
 
-
-function groupEntriesByDate(entries) {
-    const groups = new Map();
-
-    const sortedEntries = [...entries].sort(
-        (a, b) => b.timestamp - a.timestamp
-    );
-
-    for (const entry of sortedEntries) {
-        const date = dateFormatter.format(entry.timestamp);
-
-        if (!groups.has(date)) {
-            groups.set(date, []);
-        }
-
-        groups.get(date).push(entry);
-    }
-
-    return groups;
-}
 
 
 function createEntryElement(entry) {
@@ -77,27 +51,50 @@ export async function renderJournal() {
     journalContent.textContent = "Loading...";
 
     try {
-        const entries = await getEntries();
+        const history = await loadEnergyHistory();
+
         journalContent.replaceChildren();
 
-        if (entries.length === 0) {
-            journalContent.textContent = "No entries yet.";
+        if (history.length === 0) {
+            journalContent.textContent = "No history yet.";
             return;
         }
 
-        const groups = groupEntriesByDate(entries);
+        for (const day of history) {
 
-        for (const [date, dayEntries] of groups) {
             const section = document.createElement("section");
             section.className = "journal-day";
 
             const heading = document.createElement("h3");
             heading.className = "journal-date";
-            heading.textContent = date;
 
+            const date = document.createElement("span");
+            date.textContent = day.date.split("-").reverse().join(".");
+
+            const balance = document.createElement("span");
+            balance.className = "journal-balance";
+
+            const roundedBalance = Math.round(day.balance);
+
+            balance.textContent =
+                roundedBalance > 0
+                    ? "+" + roundedBalance
+                    : String(roundedBalance);
+
+            if (roundedBalance > 0) {
+                balance.classList.add("positive");
+            } else if (roundedBalance < 0) {
+                balance.classList.add("negative");
+            }
+
+            heading.append(date, balance);
             section.append(heading);
 
-            for (const entry of dayEntries) {
+            const sortedEntries = [...day.entries].sort(
+                (a, b) => b.timestamp - a.timestamp
+            );
+
+            for (const entry of sortedEntries) {
                 section.append(createEntryElement(entry));
             }
 
@@ -106,7 +103,7 @@ export async function renderJournal() {
 
     } catch (error) {
         console.error("Journal loading failed:", error);
-        journalContent.textContent = "Could not load entries.";
+        journalContent.textContent = "Could not load history.";
     }
 }
 

@@ -219,10 +219,25 @@
 }
 
 .journal-date {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin: 0 0 10px;
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 16px;
+}
+
+.journal-balance {
+    font-weight: 600;
+}
+
+.journal-balance.positive {
+    color: #8bd6a6;
+}
+
+.journal-balance.negative {
+    color: #f28e8e;
 }
 
 .journal-entry {

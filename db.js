@@ -237,3 +237,25 @@ async function deleteEntry(id) {
         };
     });
 }
+
+/* ===== READ WEIGHT HISTORY ===== */
+
+async function getWeightHistory() {
+    const db = await openDatabase();
+
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("weightHistory", "readonly");
+        const store = transaction.objectStore("weightHistory");
+        const request = store.getAll();
+
+        transaction.oncomplete = function() {
+            db.close();
+            resolve(request.result);
+        };
+
+        transaction.onabort = function() {
+            db.close();
+            reject(transaction.error);
+        };
+    });
+}
