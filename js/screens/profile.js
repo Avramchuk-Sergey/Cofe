@@ -1,5 +1,6 @@
 import { showScreen } from "../navigation.js";
 import { updateSky } from "../ui/sky.js";
+import { calculateDailyCalories } from "../core/energy.js";
 
 
 const openProfileButton = document.querySelector("#open-profile");
@@ -11,6 +12,15 @@ const sexInput = document.querySelector("#profile-sex");
 const birthInput = document.querySelector("#profile-birth");
 const heightInput = document.querySelector("#profile-height");
 const weightInput = document.querySelector("#profile-weight");
+const dailyCaloriesElement = document.querySelector("#profile-daily-calories");
+
+
+function updateDailyCaloriesDisplay(profile) {
+    const dailyCalories = calculateDailyCalories(profile);
+
+    dailyCaloriesElement.textContent =
+        dailyCalories.toFixed(0);
+}
 
 
 export function initProfile(onProfileSaved) {
@@ -26,6 +36,7 @@ export function initProfile(onProfileSaved) {
                 birthInput.value = profile.birthDate;
                 heightInput.value = profile.height;
                 weightInput.value = profile.weight;
+				updateDailyCaloriesDisplay(profile);
             }
 
         } catch (error) {
@@ -60,6 +71,7 @@ export function initProfile(onProfileSaved) {
             await saveProfile(profile);
 
             onProfileSaved(profile);
+			updateDailyCaloriesDisplay(profile);
 
             alert("Profile saved successfully!");
 
