@@ -210,9 +210,20 @@
 	
 		
 		<div class="profile-expenditure">
-            <span>Daily energy expenditure</span>
-            <strong id="profile-daily-calories">—</strong>
+
+            <span id="profile-daily-calories">—</span>
             <small>kcal/day</small>
+
+            <details class="expenditure-help">
+                <summary aria-label="About daily energy expenditure">?</summary>
+
+                <div class="expenditure-tooltip">
+                    Estimated daily energy expenditure:
+                    basal metabolic rate (BMR) × 1.2,
+                    including minimal daily activity.
+                </div>
+            </details>
+
         </div>
 
     </form>

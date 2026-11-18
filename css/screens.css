@@ -1,3 +1,32 @@
+/* ===== SHARED FORM FIELDS ===== */
+
+.energy-form textarea,
+.energy-form > input,
+#profile-form input,
+#profile-form select,
+.entry-datetime input {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    background: transparent;
+    color: white;
+    font: inherit;
+    font-size: 16px;
+    color-scheme: dark;
+}
+
+.energy-form textarea::placeholder,
+.energy-form input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#profile-form select option {
+    background: #253040;
+    color: white;
+}
+
 /* ===== ENERGY ENTRY FORM ===== */
 .energy-form {
     display: flex;
@@ -18,11 +47,6 @@
 .entry-type legend { margin-bottom: 9px; font-size: 14px; }
 .entry-type label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
 .energy-form > label { font-size: 14px; }
-.energy-form textarea, .energy-form > input {
-    width: 100%; min-width: 0; padding: 12px;
-    border: 1px solid #ccc; border-radius: 8px;
-    background: white; color: #222; font: inherit;
-}
 .energy-form textarea { resize: vertical; }
 .entry-hint { margin: 0; font-size: 12px; opacity: .8; }
 .entry-status { margin: 0; font-size: 13px; }
@@ -121,16 +145,6 @@
     font-size: 14px;
 }
 
-#profile-form input,
-#profile-form select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #aaa;
-    border-radius: 8px;
-    background: white;
-    color: #222;
-    font-size: 16px;
-}
 
 .profile-save {
     margin-top: 20px;
@@ -146,23 +160,56 @@
 
 .profile-expenditure {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 6px;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    text-align: center;
+    margin-top: 10px;
+    color: #f28e8e;
 }
 
-.profile-expenditure strong {
-    font-size: 32px;
-    font-weight: 600;
+#profile-daily-calories {
+    font-size: 18px;
+    font-weight: 400;
 }
 
 .profile-expenditure small {
-    font-size: 13px;
-    opacity: 0.7;
+    font-size: 12px;
+}
+
+.expenditure-help {
+    position: relative;
+}
+
+.expenditure-help summary {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    list-style: none;
+    cursor: pointer;
+}
+
+.expenditure-help summary::-webkit-details-marker {
+    display: none;
+}
+
+.expenditure-tooltip {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 8px);
+    width: 200px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    background: #253040;
+    color: white;
+    font-size: 12px;
+    line-height: 1.5;
+    z-index: 10;
 }
 
 /* ===== JOURNAL SCREEN ===== */
@@ -222,16 +269,6 @@
     font-size: 14px;
 }
 
-.entry-datetime input {
-    width: 100%;
-    min-width: 0;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: white;
-    color: #222;
-    font: inherit;
-}
 
 .entry-delete {
     padding: 14px;

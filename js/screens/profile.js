@@ -19,7 +19,7 @@ function updateDailyCaloriesDisplay(profile) {
     const dailyCalories = calculateDailyCalories(profile);
 
     dailyCaloriesElement.textContent =
-        dailyCalories.toFixed(0);
+    "−" + dailyCalories.toFixed(0);
 }
 
 
