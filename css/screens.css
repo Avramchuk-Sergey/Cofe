@@ -103,7 +103,8 @@
 /* ===== PROFILE SCREEN ===== */
 
 .profile-screen,
-.journal-screen {
+.journal-screen,
+.statistics-screen {
     margin-top: 35px;
     padding: 20px;
     border-radius: 14px;
@@ -112,7 +113,8 @@
 }
 
 .profile-header,
-.journal-header {
+.journal-header,
+.statistics-header {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -120,13 +122,15 @@
 }
 
 .profile-header h2,
-.journal-header h2 {
+.journal-header h2,
+.statistics-header h2 {
     margin: 0;
     font-size: 24px;
 }
 
 #close-profile,
-#close-journal {
+#close-journal,
+#close-statistics {
     background: transparent;
     border: none;
     color: white;
@@ -318,4 +322,37 @@
 
 .journal-entry:hover {
     background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== STATISTICS SCREEN ===== */
+
+.statistics-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 25px 0;
+}
+
+.statistics-total span {
+    font-size: 15px;
+    opacity: 0.8;
+}
+
+#total-energy-balance {
+    font-size: 36px;
+    font-weight: 600;
+}
+
+#total-energy-balance.positive {
+    color: #8bd6a6;
+}
+
+#total-energy-balance.negative {
+    color: #f28e8e;
+}
+
+.statistics-total small {
+    font-size: 13px;
+    opacity: 0.7;
 }

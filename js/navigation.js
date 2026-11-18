@@ -4,7 +4,8 @@ const screens = {
     home: document.querySelector("#home-screen"),
     entry: document.querySelector("#energy-form"),
     profile: document.querySelector("#profile-screen"),
-	journal: document.querySelector("#journal-screen")
+    journal: document.querySelector("#journal-screen"),
+    statistics: document.querySelector("#statistics-screen")
 };
 
 const openEntryButton = document.querySelector("#open-entry");

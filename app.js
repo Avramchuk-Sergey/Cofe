@@ -33,6 +33,9 @@ import {
     renderJournal
 } from "./js/screens/journal.js";
 
+import { initStatistics }
+from "./js/screens/statistics.js";
+
 
 /* ===== COFE CONFIGURATION ===== */
 
@@ -115,6 +118,7 @@ showScreen("home");
 initHome(updateCounter);
 initEntry(loadTodayEntries, renderJournal);
 initJournal();
+initStatistics();
 
 initProfile(function(profile) {
     dailyCalories = calculateDailyCalories(profile);
