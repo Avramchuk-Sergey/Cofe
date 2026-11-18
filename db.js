@@ -190,3 +190,50 @@ async function getEntries() {
         transaction.onerror = function() { db.close(); reject(transaction.error); };
     });
 }
+
+/* ===== UPDATE ENERGY ENTRY ===== */
+
+async function updateEntry(entry) {
+    const db = await openDatabase();
+
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("entries", "readwrite");
+        const store = transaction.objectStore("entries");
+
+        store.put(entry);
+
+        transaction.oncomplete = function() {
+            db.close();
+            resolve();
+        };
+
+        transaction.onabort = function() {
+            db.close();
+            reject(transaction.error);
+        };
+    });
+}
+
+
+/* ===== DELETE ENERGY ENTRY ===== */
+
+async function deleteEntry(id) {
+    const db = await openDatabase();
+
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("entries", "readwrite");
+        const store = transaction.objectStore("entries");
+
+        store.delete(id);
+
+        transaction.oncomplete = function() {
+            db.close();
+            resolve();
+        };
+
+        transaction.onabort = function() {
+            db.close();
+            reject(transaction.error);
+        };
+    });
+}

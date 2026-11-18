@@ -209,3 +209,61 @@
 .journal-calories.out {
     color: #f28e8e;
 }
+
+/* ===== ENTRY EDITING ===== */
+
+.entry-datetime {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.entry-datetime label {
+    font-size: 14px;
+}
+
+.entry-datetime input {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    color: #222;
+    font: inherit;
+}
+
+.entry-delete {
+    padding: 14px;
+    border: 1px solid #f28e8e;
+    border-radius: 9px;
+    background: transparent;
+    color: #f28e8e;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.entry-delete:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.entry-datetime.hidden,
+.entry-delete.hidden {
+    display: none;
+}
+
+.journal-entry {
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.journal-entry:hover {
+    background: rgba(255, 255, 255, 0.08);
+}

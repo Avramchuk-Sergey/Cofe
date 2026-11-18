@@ -1,5 +1,6 @@
 import { showScreen } from "../navigation.js";
 import { updateSky } from "../ui/sky.js";
+import { openEditEntry } from "./entry.js";
 
 const journalContent = document.querySelector("#journal-content");
 const openJournalButton = document.querySelector("#open-journal");
@@ -41,7 +42,8 @@ function groupEntriesByDate(entries) {
 
 
 function createEntryElement(entry) {
-    const row = document.createElement("div");
+    const row = document.createElement("button");
+    row.type = "button";
     row.className = "journal-entry";
 
     const time = document.createElement("span");
@@ -62,12 +64,16 @@ function createEntryElement(entry) {
         (isIncome ? "+" : "−") + entry.calories;
 
     row.append(time, description, calories);
+	
+	row.addEventListener("click", function() {
+    openEditEntry(entry);
+    });
 
     return row;
 }
 
 
-async function renderJournal() {
+export async function renderJournal() {
     journalContent.textContent = "Loading...";
 
     try {

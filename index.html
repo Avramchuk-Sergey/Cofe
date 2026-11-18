@@ -123,7 +123,7 @@
 	</div>
 <form id="energy-form" class="energy-form hidden">
         <div class="entry-heading">
-            <h2>Energy entry</h2>
+            <h2 id="entry-title">Energy entry</h2>
             <button id="close-entry" type="button" aria-label="Close form">×</button>
         </div>
 
@@ -141,9 +141,27 @@
         <input type="number" id="calories" placeholder="e.g. 450"
                min="0.01" step="any" required>
 
-        <p class="entry-hint">Date and time are recorded automatically.</p>
+        <div id="entry-datetime" class="entry-datetime hidden">
+
+    <label for="entry-date">Date</label>
+    <input id="entry-date" type="date">
+
+    <label for="entry-time">Time</label>
+    <input id="entry-time" type="time" step="1">
+
+</div>
+
+<p id="entry-hint" class="entry-hint">
+    Date and time are recorded automatically.
+</p>
         <p id="entry-status" class="entry-status" role="status"></p>
         <button id="add-energy" class="entry-save" type="submit">Save entry</button>
+		
+			<button id="delete-entry"
+        class="entry-delete hidden"
+        type="button">
+    Delete entry
+</button>
     </form>
 	
 	
@@ -188,6 +206,8 @@
         <button type="submit" class="profile-save">
             Save
         </button>
+		
+	
 		
 		<div class="profile-expenditure">
             <span>Daily energy expenditure</span>

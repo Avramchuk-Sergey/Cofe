@@ -6,80 +6,267 @@ import {
 import { updateSky } from "../ui/sky.js";
 
 
+/* ===== UI ELEMENTS ===== */
+
 const openEntryButton = document.querySelector("#open-entry");
-const descriptionInput = document.querySelector("#energy-description");
-const entryTypeInputs = document.querySelectorAll('input[name="entry-type"]');
 const closeEntryButton = document.querySelector("#close-entry");
-const entryStatus = document.querySelector("#entry-status");
 const energyForm = document.querySelector("#energy-form");
+
+const entryTitle = document.querySelector("#entry-title");
+const entryHint = document.querySelector("#entry-hint");
+const entryStatus = document.querySelector("#entry-status");
+
+const descriptionInput = document.querySelector("#energy-description");
 const caloriesInput = document.querySelector("#calories");
+const entryTypeInputs = document.querySelectorAll('input[name="entry-type"]');
+
+const dateTimeFields = document.querySelector("#entry-datetime");
+const dateInput = document.querySelector("#entry-date");
+const timeInput = document.querySelector("#entry-time");
+
 const addEnergyButton = document.querySelector("#add-energy");
+const deleteEntryButton = document.querySelector("#delete-entry");
 
 
-let inputMode = "in";
+/* ===== ENTRY STATE ===== */
+
+let editingEntry = null;
+let isBusy = false;
+
+let refreshTodayEntries;
+let refreshJournal;
+
+
+/* ===== DATE AND TIME ===== */
+
+const minskDateTimeFormatter = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Europe/Minsk",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+});
+
+
+function fillDateTime(timestamp) {
+    const parts = Object.fromEntries(
+        minskDateTimeFormatter
+            .formatToParts(new Date(timestamp))
+            .map(part => [part.type, part.value])
+    );
+
+    dateInput.value =
+        `${parts.year}-${parts.month}-${parts.day}`;
+
+    timeInput.value =
+        `${parts.hour}:${parts.minute}:${parts.second}`;
+}
+
+
+function readTimestamp() {
+    if (!editingEntry) {
+        return Date.now();
+    }
+
+    return new Date(
+        `${dateInput.value}T${timeInput.value}+03:00`
+    ).getTime();
+}
+
+
+/* ===== FORM STATE ===== */
+
+function setBusy(busy) {
+    isBusy = busy;
+    addEnergyButton.disabled = busy;
+    deleteEntryButton.disabled = busy;
+    closeEntryButton.disabled = busy;
+}
+
+
+function configureForm(entry = null) {
+    energyForm.reset();
+    entryStatus.textContent = "";
+
+    editingEntry = entry;
+
+    const isEditing = entry !== null;
+
+    entryTitle.textContent =
+        isEditing ? "Edit entry" : "Energy entry";
+
+    addEnergyButton.textContent =
+        isEditing ? "Save changes" : "Save entry";
+
+    dateTimeFields.classList.toggle("hidden", !isEditing);
+    deleteEntryButton.classList.toggle("hidden", !isEditing);
+    entryHint.classList.toggle("hidden", isEditing);
+
+    dateInput.required = isEditing;
+    timeInput.required = isEditing;
+
+    if (isEditing) {
+        descriptionInput.value = entry.description;
+        caloriesInput.value = entry.calories;
+
+        entryTypeInputs.forEach(function(radio) {
+            radio.checked = radio.value === entry.type;
+        });
+
+        fillDateTime(entry.timestamp);
+    }
+}
+
+
+/* ===== OPEN AND CLOSE ===== */
+
+function openNewEntry() {
+    if (isBusy) return;
+
+    configureForm();
+    showScreen("entry");
+    descriptionInput.focus();
+}
+
+
+export function openEditEntry(entry) {
+    if (isBusy) return;
+
+    configureForm(entry);
+    showScreen("entry");
+}
 
 
 function closeEnergyForm() {
+    if (getCurrentScreen() !== "entry") return;
+
+    const returnToJournal = editingEntry !== null;
+
+    editingEntry = null;
     entryStatus.textContent = "";
 
-    if (getCurrentScreen() === "entry") {
+    if (returnToJournal) {
+        showScreen("journal");
+        refreshJournal();
+    } else {
         showScreen("home");
         updateSky();
     }
 }
 
 
-export function initEntry(loadTodayEntries) {
+/* ===== SAVE ENTRY ===== */
 
-    openEntryButton.addEventListener("click", function() {
-        energyForm.reset();
-        inputMode = "in";
-        entryStatus.textContent = "";
+async function handleEntrySubmit(event) {
+    event.preventDefault();
 
-        showScreen("entry");
+    if (isBusy) return;
 
-        descriptionInput.focus();
-    });
+    const description = descriptionInput.value.trim();
+    const calories = Number(caloriesInput.value);
+    const timestamp = readTimestamp();
 
-    closeEntryButton.addEventListener("click", closeEnergyForm);
+    const selectedType = energyForm.querySelector(
+        'input[name="entry-type"]:checked'
+    );
 
-    entryTypeInputs.forEach(function(radio) {
-        radio.addEventListener("change", function() {
-            if (radio.checked) inputMode = radio.value;
-        });
-    });
+    if (!description ||
+        !Number.isFinite(calories) ||
+        calories <= 0 ||
+        !selectedType) {
 
-    energyForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
+        entryStatus.textContent =
+            "Enter a description and positive kcal value.";
+        return;
+    }
 
-        const description = descriptionInput.value.trim();
-        const calories = Number(caloriesInput.value);
+    if (!Number.isFinite(timestamp) || timestamp > Date.now()) {
+        entryStatus.textContent = "Enter a valid date and time.";
+        return;
+    }
 
-        if (!description || !Number.isFinite(calories) || calories <= 0) {
-            entryStatus.textContent = "Enter a description and positive kcal value.";
-            return;
-        }
+    const entry = {
+        type: selectedType.value,
+        description: description,
+        calories: calories,
+        timestamp: timestamp
+    };
 
-        addEnergyButton.disabled = true;
-        entryStatus.textContent = "Saving...";
+    setBusy(true);
+    entryStatus.textContent = "Saving...";
 
-        try {
-            await saveEntry({
-                type: inputMode,
-                description: description,
-                calories: calories,
-                timestamp: Date.now()
+    try {
+        if (editingEntry) {
+            await updateEntry({
+                ...editingEntry,
+                ...entry
             });
+        } else {
+            await saveEntry(entry);
+        }
 
-            await loadTodayEntries();
+        await refreshTodayEntries();
+
+        closeEnergyForm();
+
+    } catch (error) {
+        console.error("Energy entry saving failed:", error);
+        entryStatus.textContent = "Could not save entry.";
+
+    } finally {
+        setBusy(false);
+    }
+}
+
+
+/* ===== DELETE ENTRY ===== */
+
+async function handleEntryDelete() {
+    if (!editingEntry || isBusy) return;
+
+    if (!window.confirm("Delete this energy entry?")) {
+        return;
+    }
+
+    setBusy(true);
+    entryStatus.textContent = "Deleting...";
+
+    try {
+        await deleteEntry(editingEntry.id);
+
+        await refreshTodayEntries();
+
+        closeEnergyForm();
+
+    } catch (error) {
+        console.error("Energy entry deletion failed:", error);
+        entryStatus.textContent = "Could not delete entry.";
+
+    } finally {
+        setBusy(false);
+    }
+}
+
+
+/* ===== INITIALIZATION ===== */
+
+export function initEntry(loadTodayEntries, renderJournal) {
+
+    refreshTodayEntries = loadTodayEntries;
+    refreshJournal = renderJournal;
+
+    openEntryButton.addEventListener("click", openNewEntry);
+
+    closeEntryButton.addEventListener("click", function() {
+        if (!isBusy) {
             closeEnergyForm();
-
-        } catch (error) {
-            console.error("Energy entry saving failed:", error);
-            entryStatus.textContent = "Could not save entry.";
-
-        } finally {
-            addEnergyButton.disabled = false;
         }
     });
+
+    energyForm.addEventListener("submit", handleEntrySubmit);
+
+    deleteEntryButton.addEventListener("click", handleEntryDelete);
 }

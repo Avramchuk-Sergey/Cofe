@@ -28,8 +28,10 @@ from "./js/screens/entry.js";
 import { initProfile }
 from "./js/screens/profile.js";
 
-import { initJournal }
-from "./js/screens/journal.js";
+import {
+    initJournal,
+    renderJournal
+} from "./js/screens/journal.js";
 
 
 /* ===== COFE CONFIGURATION ===== */
@@ -111,7 +113,7 @@ async function loadTodayEntries() {
 
 showScreen("home");
 initHome(updateCounter);
-initEntry(loadTodayEntries);
+initEntry(loadTodayEntries, renderJournal);
 initJournal();
 
 initProfile(function(profile) {
